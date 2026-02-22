@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Garv Singal | Launch</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+
+<style>
+
+/* ================= GLOBAL ================= */
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:'Orbitron',sans-serif;
+}
+
+body{
+  margin:0;
+  height:100svh;
+  background:#000;
+  display:grid;
+  place-items:center;
+  position:relative;
+  overflow:hidden;
+  color:#ffffff;
+}
+
+/* ================= PARTICLES ================= */
+
+canvas{
+  position:fixed;
+  inset:0;
+  z-index:-1;
+}
+
+/* ================= MAIN CONTAINER ================= */
+
+.container{
+  text-align:center;
+  width:100%;
+  max-width:1200px;
+  padding:0 20px;
+  transition:transform 0.2s ease;
+}
+
+h1{
+  font-size: clamp(42px, 8vw, 110px);
+  font-weight:900;
+  letter-spacing: clamp(2px, 0.6vw, 8px);
+  position:relative;
+}
+
+/* Glitch layers */
+
+h1::before,
+h1::after{
+  content:attr(data-text);
+  position:absolute;
+  left:0;
+  top:0;
+  width:100%;
+  overflow:hidden;
+}
+
+h1::before{
+  color:#39ff14;
+  z-index:-1;
+  animation:glitch1 2s infinite;
+}
+
+h1::after{
+  color:#ff0055;
+  z-index:-2;
+  animation:glitch2 2s infinite;
+}
+
+@keyframes glitch1{
+  0%{transform:translate(0)}
+  20%{transform:translate(-3px,2px)}
+  40%{transform:translate(-2px,-2px)}
+  60%{transform:translate(2px,2px)}
+  80%{transform:translate(1px,-1px)}
+  100%{transform:translate(0)}
+}
+
+@keyframes glitch2{
+  0%{transform:translate(0)}
+  20%{transform:translate(3px,-2px)}
+  40%{transform:translate(2px,2px)}
+  60%{transform:translate(-2px,-2px)}
+  80%{transform:translate(-1px,1px)}
+  100%{transform:translate(0)}
+}
+
+.subtitle{
+  margin-top:1.5rem;
+  letter-spacing:0.25em;
+  font-size: clamp(12px, 2vw, 18px);
+  color:#39ff14;
+}
+
+/* ================= BUTTON ================= */
+
+.enter-btn{
+  margin-top: clamp(30px, 6vh, 70px);
+  padding: clamp(12px, 2vw, 18px) clamp(32px, 6vw, 60px);
+  font-size: clamp(12px, 1.5vw, 16px);
+  background:transparent;
+  border:2px solid #39ff14;
+  color:#39ff14;
+  font-weight:700;
+  cursor:pointer;
+  transition:0.3s;
+  position:relative;
+  overflow:hidden;
+}
+
+.enter-btn:hover{
+  background:#39ff14;
+  color:#000;
+  box-shadow:0 0 40px #39ff14;
+  transform:scale(1.1);
+}
+
+/* ================= EXIT EFFECT ================= */
+
+body.exit{
+  animation:flash 0.8s forwards;
+}
+
+@keyframes flash{
+  0%{background:#000;}
+  50%{background:#39ff14;}
+  100%{opacity:0;}
+}
+
+/* ================= RESPONSIVE ================= */
+
+@media (max-width: 480px){
+  .subtitle{
+    letter-spacing:2px;
+  }
+
+  .enter-btn{
+    width:100%;
+    max-width:260px;
+  }
+}
+
+</style>
+</head>
+<body>
+
+<canvas id="particles"></canvas>
+
+<div class="container" id="container">
+  <h1 data-text="GARV SINGAL">GARV SINGAL</h1>
+  <div class="subtitle">INTERACTIVE DIGITAL ENGINEER</div>
+  <button class="enter-btn" onclick="enterSite()">ENTER PORTFOLIO</button>
+</div>
+
+<script>
+
+/* ================= PARTICLE SYSTEM ================= */
+
+const canvas = document.getElementById("particles");
+const ctx = canvas.getContext("2d");
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+let particles = [];
+
+for(let i=0;i<120;i++){
+  particles.push({
+    x:Math.random()*canvas.width,
+    y:Math.random()*canvas.height,
+    size:Math.random()*2,
+    speedY:Math.random()*1+0.2
+  });
+}
+
+function animate(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.fillStyle="rgba(57,255,20,0.8)";
+  particles.forEach(p=>{
+    ctx.beginPath();
+    ctx.arc(p.x,p.y,p.size,0,Math.PI*2);
+    ctx.fill();
+    p.y += p.speedY;
+    if(p.y>canvas.height) p.y=0;
+  });
+  requestAnimationFrame(animate);
+}
+
+animate();
+
+function resizeCanvas(){
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  particles = [];
+  for(let i=0;i<120;i++){
+    particles.push({
+      x:Math.random()*canvas.width,
+      y:Math.random()*canvas.height,
+      size:Math.random()*2,
+      speedY:Math.random()*1+0.2
+    });
+  }
+}
+
+resizeCanvas();
+window.addEventListener("resize", resizeCanvas);
+
+/* ================= 3D PARALLAX ================= */
+
+const container = document.getElementById("container");
+
+document.addEventListener("mousemove",(e)=>{
+  const rect = container.getBoundingClientRect();
+  const centerX = rect.left + rect.width / 2;
+  const centerY = rect.top + rect.height / 2;
+
+  const rotateX = (e.clientY - centerY) / 50;
+  const rotateY = (centerX - e.clientX) / 50;
+
+  container.style.transform = `
+    perspective(1000px)
+    rotateX(${rotateX}deg)
+    rotateY(${rotateY}deg)
+  `;
+});
+
+/* ================= ENTER ================= */
+
+function enterSite(){
+  document.body.classList.add("exit");
+  setTimeout(()=>{
+    window.location.href="home.html";
+  },800);
+}
+
+</script>
+
+</body>
+</html>
